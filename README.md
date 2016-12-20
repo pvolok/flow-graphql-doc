@@ -1,10 +1,10 @@
 Docs for the WIP GraphQL support in Flow. Most importantly validation
 differences between this implementation and the GraphQL spec.
 
-Tracking issue: facebook/flow#2823
+Tracking issue: https://github.com/facebook/flow/issues/2823
 
 Operations
-==========
+----------
 
 ### Regular operation
 
@@ -16,31 +16,33 @@ Operations
 gql`query { me { name } }`;
 ```
 
-### Relay query
+### Relay query/mutation
+
+In Relay root query and mutations are specified by the operations with top level
+fields with no selections. Selections for those fields are described by
+fragments.
 
 Conditions:
-- Operation type: query
+- No fields have selection
 - No var declaration
-- Single field
+
+Differences from regular operations:
+- Cannot extract data
 
 ```javascript
 gql`query { user(id: $userID) }`;
+
+gql`mutation { likeStory(input: $input) }`;
 ```
 
-### Relay mutation
-
-Conditions:
-- Operation type: mutation
-- No var declaration
-- Single field with no args
-  - Field accepts one argument named `input`
-
-```javascript
-gql`mutation { likeStory }`;
-```
+**TODO**: check getMutation() and getFatQuery() compatibility
 
 Fragments
-=========
+---------
+
+- Variables
+  - Checked if declared
+  - Inferred if not declared
 
 ```javascript
 gql`fragment on User { id name }`;
